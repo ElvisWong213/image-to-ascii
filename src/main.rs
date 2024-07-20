@@ -1,4 +1,4 @@
-use std::fs;
+use std::{fs, path::PathBuf};
 use clap::Parser;
 use image::open;
 
@@ -6,7 +6,7 @@ fn main() {
     let args = Args::parse();
 
     let ascii_chars = ["." ,"," ,":" ,";" ,"+" ,"*" ,"?" ,"%" ,"$" ,"#" ,"@"];
-    let img = match open(args.input_path) {
+    let img = match open(&args.input_path) {
         Ok(image) => image,
         Err(error) => {
             println!("{:}", error);
@@ -32,11 +32,24 @@ fn main() {
             current_y = y;
         }
     }
-    fs::write(args.output_name + ".txt", output).expect("Unable to write file");
+    
+    let output_name = match args.output_name {
+        Some(name) => name + ".txt",
+        None => {
+            let mut origin_input_path = args.input_path.to_owned();
+            if origin_input_path.set_extension("txt") == false {
+                panic!("Unable to change the wxtension");
+            }
+            origin_input_path.file_name().unwrap().to_str().unwrap().to_string()
+        }
+    };
+    fs::write(output_name, output).expect("Unable to write file");
 }
 
-#[derive(Parser)]
+#[derive(Parser, Debug)]
 struct Args {
-    input_path: String,
-    output_name: String,
+    #[arg(short)]
+    input_path: PathBuf,
+    #[arg(short)]
+    output_name: Option<String>,
 }
