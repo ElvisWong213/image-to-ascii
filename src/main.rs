@@ -73,10 +73,15 @@ fn main() {
 
 #[derive(Parser, Debug)]
 struct Args {
+    /// Input image path
     #[arg(short)]
     input_path: PathBuf,
+
+    /// Optional output file name
     #[arg(short)]
     output_name: Option<String>,
+    
+    /// Optional output width
     #[arg(short)]
     width: Option<u32>,
 }
