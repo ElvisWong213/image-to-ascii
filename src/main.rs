@@ -52,9 +52,34 @@ fn main() {
         }
     }
 
-    // save file
-    let output_name = match args.output_name {
-        Some(name) => name + ".txt",
+    if save_file(&args, &output) {
+        println!("File saved");
+    }
+
+    // print output
+    match args.print {
+        Some(print) => {
+            if print == false {
+                return;
+            }
+        }
+        None => {}
+    }
+
+    print!("{:}", &output);
+}
+
+fn save_file(args: &Args, output: &String) -> bool {
+    match args.save {
+        Some(save) => {
+            if save == false {
+                return false;
+            }
+        }
+        None => {}
+    }
+    let output_name = match &args.output_name {
+        Some(name) => name.to_owned() + ".txt",
         None => {
             let mut origin_input_path = args.input_path.to_owned();
             if origin_input_path.set_extension("txt") == false {
@@ -68,7 +93,8 @@ fn main() {
                 .to_string()
         }
     };
-    fs::write(output_name, output).expect("Unable to write file");
+    fs::write(output_name, &output).expect("Unable to write file");
+    return true;
 }
 
 #[derive(Parser, Debug)]
@@ -80,8 +106,16 @@ struct Args {
     /// Optional output file name
     #[arg(short)]
     output_name: Option<String>,
-    
+
     /// Optional output width
     #[arg(short)]
     width: Option<u32>,
+
+    /// Save file
+    #[arg(short)]
+    save: Option<bool>,
+
+    /// Print out result
+    #[arg(short)]
+    print: Option<bool>,
 }
