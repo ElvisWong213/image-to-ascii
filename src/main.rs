@@ -1,4 +1,4 @@
-use clap::Parser;
+use clap::{ArgAction, Parser};
 use image::{open, DynamicImage};
 use std::{fs, path::PathBuf};
 
@@ -59,14 +59,12 @@ fn main() {
     // print output
     match args.print {
         Some(print) => {
-            if print == false {
-                return;
+            if print == true {
+                print!("{:}", &output);
             }
         }
         None => {}
     }
-
-    print!("{:}", &output);
 }
 
 fn save_file(args: &Args, output: &String) -> bool {
@@ -100,22 +98,22 @@ fn save_file(args: &Args, output: &String) -> bool {
 #[derive(Parser, Debug)]
 struct Args {
     /// Input image path
-    #[arg(short)]
+    #[clap(short)]
     input_path: PathBuf,
 
-    /// Optional output file name
-    #[arg(short)]
+    /// Output file name (Optional)
+    #[clap(short)]
     output_name: Option<String>,
 
-    /// Optional output width
-    #[arg(short)]
+    /// Output width (Optional)
+    #[clap(short)]
     width: Option<u32>,
 
-    /// Save file
-    #[arg(short)]
+    /// Save file (Optional)
+    #[clap(short, action=ArgAction::SetTrue)]
     save: Option<bool>,
 
-    /// Print out result
-    #[arg(short)]
+    /// Print out result to terminal (Optional)
+    #[clap(short, action=ArgAction::SetTrue)]
     print: Option<bool>,
 }
